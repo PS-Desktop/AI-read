@@ -1,0 +1,2663 @@
+hello everyone my name is shalanda Chri I have created a deep dive video course on Azure application Gateway in this
+0:07
+series we'll start from the basic fundamentals and then dive into advanced topic so that you gain a solid
+0:13
+understanding of how to configure optimize and troubleshoot application Gateway in various scenarios slide on your screen shows the
+0:20
+different topics which are covered in this course each video is carefully crafted to be a hands-on experience
+0:26
+we'll not only discuss the theoretical Concepts but also walk through the Practical demonstrations providing you
+0:33
+with the real world perspective on how to use application Gateway effectively and if you want to follow a specific
+0:39
+Topic in this course you can go to the description of this video and click on the time provided in the front of the
+0:45
+topic that will take you straight to that part so let's start in this video
+Components Features and Workflow
+0:51
+I'll be explaining about what is application Gateway its features components and how it works so let's
+0:57
+start so application Gateway is a webbased load balancer that works on OSI layer 7 which is an application layer so
+1:05
+if you look at the OSI model there are seven layers and application Gateway works on layer 7even which is an
+1:11
+application layer and it is also called as HTTP layer however if we'll talk
+1:16
+about the traditional load balances they mostly work on layer three and layer four which are network layer and
+1:22
+transport layer so this means all the routing happens only on the basis of source Port destination port and Source
+1:29
+IP address and destination IP address however application Gateway is an intelligent load balancer because it
+1:35
+works with application layer so it routes the traffic based on incoming request sttp attributes like host path
+1:41
+based routing or URI based routing or the host headers if you check the diagram on the right side this shows how
+1:48
+host path based routing Works in application Gateway for the traffic hitting the application Gateway
+1:53
+application Gateway checks the URI path if it finds images in the URI path it
+1:58
+will route the traffic towards image server pool which is the back end specifically designed to cater images
+2:04
+and if it finds video in the URI path then the traffic will be routed towards the video server pool so in short you
+2:11
+can say application Gateway is a specialized load balancer designed for web applications and it offers Advanced
+2:18
+routing and security features at application layer let's move on to the features of application Gateway so the
+2:24
+first one is SSL TLS termination so SSL TLS termination it allows the
+2:30
+application gateway to decrypt the https traffic before it passes to the backend server so it offloads the CPU intensive
+2:37
+decryption from backend servers which improve their performance there is one more benefit of using the SSL TLS
+2:43
+termination that is the centralized certificate management so you don't need to manage the certificates on the
+2:49
+backend server however you can just manage the certificates on the application Gateway and all the
+2:55
+decryption and the encryption will happen at application Gateway only but this doesn't mean that application
+3:01
+Gateway supports only SSL and TLS termination so it supports end to endend TLS encryption and decryption another
+3:08
+one is the autoscaling as the name suggests application Gateway will automatically adjust the number of the
+3:14
+Gateway instances based on the traffic demand so if in case there is a performance requirement during the
+3:19
+traffic spikes it will increase the number of instances and during the period of low traffic it will reduce the
+3:26
+number of instances which will further reduce the cost of using application Gateway third one is Zone redundancy
+3:33
+application Gateway is a regional service so that means for the case of high availability and fall tolerance you
+3:40
+need to deploy application Gateway in multiple regions however after the support for Azure availability zones now
+3:48
+the high availability and the fall tolerance can be provided by Distributing the application Gateway instances across different zones Now
+3:56
+application Gateway provides the feature of static virtual IP so that means the public IP which is created for the
+4:01
+application Gateway will remain unchanged till the life cycle of application Gateway this is a very
+4:07
+useful feature because the DNS registration of the custom domains to the public IP of the appliation Gateway
+4:14
+not to be done multiple times another one is web application firewall so application Gateway during the creation
+4:21
+provides a feature where you can enable the web access firewall or web application firewall using the web
+4:27
+application firewall application Gateway protects your web applications from different security threats like SQL
+4:34
+injection cross-site scripting I'll create a separate video for web access firewall or web application
+4:41
+firewall another one is ingress controller for AKs this is very useful feature when you're using the Azure
+4:48
+kubernetes cluster previously this support was not provided so you had to use nnx Ingress controller or any third
+4:56
+party controllers but now application Gateway can be used for traffic routing
+5:01
+or load balancing of cized application this one is URL based routing so the application Gateway checks the URL of
+5:08
+the traffic and then using the different routing rules which are created for the different backend server like if there
+5:14
+is a music in the URL it will go to the backend servers which will cater for the music and if there is a video in the URL
+5:22
+the traffic will be routed to the backend server which can handle the video traffic another important feature is
+5:28
+multi-site hosting so now you can use the application gateway to host multiple domains you
+5:34
+have to create separate routing rules separate backend servers and application
+5:39
+Gateway will be smart enough to check the traffic and redirect it based on URL
+5:45
+or HTTP headers application Gateway also provides redirection in some cases the
+5:51
+URL of an web application has changed but the users are still reaching to the previous URL so in that case that you
+5:58
+can set up a read Direction on the application gateways if someone is using the old URL still it will be redirected
+6:05
+to the new URL and the traffic will be handled by the backend servers there are other redirection like
+6:12
+HTTP to https redirection so if a user is not typing https before the
+6:17
+application still all the redirection will be taken care by application Gateway another important feature is
+6:23
+session Affinity it is also called a sticky session this is used mostly in the case of the ation which use cookie
+6:31
+based sessions so that means a user session State should be maintained and the
+6:37
+traffic should go to the same backend server which was catering the user or the traffic application G always load
+6:44
+balance the traffic between the backend servers to maintain the session State
+6:49
+session Affinity has to be enabled on application Gateway and the last one is rewrite HTTP
+6:56
+headers and URL using the application Gateway now you you can modify or rewrite the HTTP headers or the URL from
+7:03
+the request and or the response there are two versions of application Gateway Azure which can be
+7:09
+deployed version one and version two so the version two supports more features
+7:14
+as compared to the version one and now Microsoft recommends to deploy version two instead of version one and if
+7:21
+someone is using version one in their existing environment it's recommended to migrate to version two so on this slide
+7:28
+there are the features which are supported by version two and not available in version one version two
+7:33
+supports Autos scaling so that it can Auto Scale based on the traffic loads version two also supports Zone
+7:41
+redundancy static virtual IP AKs Ingress controller we have discussed this in the
+7:46
+previous slide version two now supports gal integration which means the certificate used for TLS authentication
+7:53
+of application Gateway can now be stored in key Vault so the rotation and the maintainance of the certific ific Ates
+7:59
+can now be done in a more efficient way version two also supports had a rewrite enhanced Network
+8:06
+control which we have already discussed now Mutual authentication is supported by version two mutual authentication is
+8:13
+also called as client authentication where the web browser used by the server has to present the digital certificate
+8:20
+to application Gateway and then application Gateway verifies that certificate against its own certificate
+8:26
+once the user certificate is accepted and trusted by application gateway then
+8:32
+the connection is established between user and application Gateway it's like an added layer of security version two
+8:39
+also supports private endpoint support and health probs application Gateway constantly monitors the health of the
+8:46
+backend servers and the routing of the traffic happens only to the healthy backend servers it prevents the packet
+8:52
+loss now now I'll talk about the components and the workflow of the application Gateway here are some of the
+8:59
+comp components like frontend IP address listeners routing rules HTTP settings
+9:04
+backend pool and health props I'll show these components in AIO portal so that it'll be easy to understand this is not
+9:10
+a Hands-On video so I have already deployed the application Gateway I'll create a separate video for step-by-step
+9:16
+demonstration of application Gateway deployment so before the creation of application Gateway I created a virtual
+9:23
+machine it's a Windows 2019 server and I have installed I on it so that it can
+9:28
+act as a web server now let's go to the application
+9:34
+Gateway based on the Microsoft recommended naming convention I have named it agw which is application
+9:40
+Gateway demo and AAE is the short form or abbreviation for Australia East and
+9:48
+001 so it's in the resource Group RG demo application Gateway and it's
+9:55
+connected to Virtual Network vnet demo AAE and the subnet is app Gateway subnet
+10:01
+the condition for creating an application Gateway is the subnet should be empty so if you look at the
+10:07
+configuration you can enable the auto scaling from here right now it's manual there is only one instance of
+10:12
+application Gateway which is available and http2 is enabled so if you want to
+10:18
+autoscale it you can set up the minimum instance count and the maximum is
+10:23
+125 let's discard it now web application firewall W can be
+10:31
+enabled but right now it's only the standard version V2 if you want to enable the V create a new W policy and
+10:38
+then save it backend pools the Windows server or
+10:45
+the windows web server which I have created is added to the backend pool now there are multiple Target types
+10:52
+which can be added based on the IP address or fully qualified domain name so that means application Gateway is not
+10:59
+limited only for Azure it can be used for on Prem as well as the different
+11:04
+clouds there should be a connectivity between the virtual Network where application Gateway is deployed and to
+11:10
+the Target virtual machine and you can just directly Define the virtual machines virtual machine scill set and
+11:17
+the app services in ASO so for now and the target is demo web 013 which is a private IP assigned
+11:25
+to the server in the backend settings it is is defined that the backend protocol
+11:31
+is HTTP you can enable https but for that we need TLS authentication the back
+11:36
+end port is at you can enable the cookie based Affinity which is also called as session
+11:41
+Affinity from here and the connection draining in case you are making the changes on the website and you want the
+11:47
+users to get the latest changes then you can do the connection training from here front end IP
+11:53
+address application Gateway can be used as a internal web load balancer as well as external so a public IP is created if
+12:01
+you want to use it for the external load balancer here you can see one public IP is created for it so that means if
+12:07
+someone wants to reach the application Gateway from internet this public IP will be used for it and in case of the
+12:14
+different URLs like the custom domains the custom domain has to be registered
+12:20
+with this public IP address you can enable the private endpoints from here or the private links SSL profiles can be
+12:28
+created which means TLS authentication where the certificates has to be provided as you can click here you can
+12:35
+see upload a new certificate listeners a listener is
+12:41
+created for the front end IP address which is a public IP to the port 8 and a routing rule is associated with it in
+12:48
+the listener type you can Define the basic which is by default or a multi-site where you want to use the different domain for the application
+12:56
+Gateway so the routing rules are defined here here where the listener is selected which means if traffic hits the public
+13:03
+IP of the application gateway then it should go to the back end Target which is the back end pool that is defined
+13:09
+here you can set up the redirection also it can be temporary permanent redirection to a different Target
+13:15
+listener you can create the rewrites from here and the health probe you can
+13:20
+Define the health Probe on which on which Port application Gateway should monitor the backend pools and if there is a specific path it should look for so
+13:28
+these are the component on of application Gateway now let's discuss the workflow so when a user using the web
+13:34
+browser hits the IP address of application Gateway it can be the custom
+13:40
+domain if you have registered it to DNS otherwise it should be the front end IP or the public IP of the application
+13:46
+Gateway once the traffic goes to the application Gateway it goes to the listener listener is created for the
+13:52
+public IP and it has the routing rule attached to it so then the traffic goes to the routing Rule and the routing rule
+13:59
+defines which backend pool or which backend server the traffic should go to so it can be multiple virtual machine
+14:06
+virtual machine scill sets on Prem or the different app servers or as your app Services if you'll just look at the
+14:12
+application Gateway which I have deployed there is a public IP attached to it so let's copy this public IP so we
+14:19
+have listener routing rules and the backend pool everything in place so if we'll try to hit this public IP from the
+14:26
+browser it should show the default page for Windows Server so as you can see
+14:32
+this is IOS services are enabled on the Windows server and this is the default page which comes
+14:38
+up and it's working fine as we have already discussed there are multiple features which we can enable like
+14:44
+multi-site hosting path-based routing URL based routing we can set it up so to
+14:49
+conclude this video application Gateway is a smart webbased load balancer which checks the HTTP header and the URL of
+14:56
+the request and then does the routing accordingly application Gateway provide
+15:01
+lot of features which makes it a good choice for the load balancing and routing of web applications that's all
+15:08
+for this video and in this video I'll show the step-by-step deployment of application
+Deployment and Path-Based Routing
+15:14
+Gateway and the setup of URL based routing in the previous video I have explained the components features and
+15:21
+workflow of application Gateway you can find the link in the description of this video so let's start
+15:29
+I have already created few resources to save the time on the implementation of application
+15:35
+Gateway so there is one Resource Group RG demo application Gateway as you can see there is a
+15:42
+virtual Network already created in this virtual Network there
+15:48
+are multiple subnets where the subnet 01 will be used by the backend servers app
+15:54
+Gateway subnet this subnet is created only for application Gateway because
+15:59
+application Gateway requires an empty subnet and the third one is the subnet used by Azure beston service Azure
+16:06
+beston service is a jumpbox service which is managed by AIO and I'm using the aure beston to log to the servers
+16:13
+otherwise I have to assign a public IP to the backend servers and to login into them so there are three backend servers
+16:20
+which I have created web AWS 01 web ao01 web a02 and
+16:27
+I've created these servers to show the path-based routing and the default routing which which I'll set it up
+16:33
+during the deployment of application Gateway these servers are windows 2019 servers and in this video I'll install
+16:40
+the isos servers so that these servers can become web servers and act as a back end for application Gateway apart from
+16:47
+this I have added one custom domain to AIO I have bought one domain devac op.
+16:53
+online from GoDaddy and I've added as a DNS Zone here
+16:59
+and in this video I'll show how we can create alas for the custom domain to the
+17:04
+front end IP of application Gateway so let's start by installing the IAS feature on one of the virtual machine
+17:11
+and convert it into web server so let's go to web Azure 02 I'll connect to this server using the
+17:19
+beston service go to beston let's
+17:27
+connect I'm into the server now let's open
+17:33
+server
+17:38
+manager and add roles and features
+17:43
+next Ro based installation next and web server which
+17:50
+is I add this feature next next we'll use the default settings only in this
+17:57
+case and install it should be installed within a
+18:03
+minute or so as you can see is is installed now let's close this and open the is
+18:16
+manager and in the is manager you can see the default website before we make some changes to the default websites
+18:23
+let's check this in browser if it's working properly Local
+18:31
+Host as you can see the default web page is available now so let's go back to the default
+18:38
+website click on the default document and there are default settings like default.htm and index.html HTM
+18:46
+which will open with this default website I have already saved few
+18:52
+files in the C drive location files this is a default page for web asure 02
+18:59
+so let's copy this HTML file to the default location let's go to C
+19:06
+drive inet Pub ww root copy it
+19:12
+here and then go to the default website default document and
+19:20
+add my page. HTML
+19:27
+okay so now in the web browser when I'll open the Local
+19:32
+Host it should show the new default page so now one of the web server is ready to
+19:38
+save time I have already set up the default page for web server web Azure 01
+19:44
+as well as web aw01 so let's start with the deployment of application Gateway let's go to
+19:50
+application Gateway
+19:56
+create select the resource Group G demo application Gateway let's give the name
+20:01
+agw which is the abbreviation for application Gateway demo AE 001 a is the abbreviation for
+20:11
+Australia East the region is Australia East version two we are not installing W
+20:17
+here let's not enable the Autos scaling now and start with only one instance we
+20:22
+don't need an availability zone for this http2 by default it will be enabled
+20:29
+let's select the virtual Network and app Gateway subnet because it's an empty
+20:35
+subnet it's automatically picked up by application Gateway let's create the front
+20:41
+ends yes we need a public IP because the same public IP will be then registered to to the custom
+20:48
+domain let's create a public
+20:55
+IP pu IP app Gateway
+21:04
+01 let's add the back end pool in this backend pool I'll add the
+21:10
+two web Azure servers so that I can show how the load balancing Works between the two
+21:16
+servers and the third server which is web AWS server that will be used for
+21:21
+showing the path-based routing so let's add the target virtual
+21:26
+machine web Azure 01 it is a network interface card for the server let's add
+21:32
+another virtual machine also web Azure 02 let's name it as web a your
+21:44
+backend add let's go to the configuration now the front end and back
+21:50
+ends are ready to set up the communication between the front end and back end routing rule has to be created
+21:55
+so let's create a routing rule web
+22:02
+Azure default
+22:08
+rule priority let's give the priority as 10 listener name
+22:14
+LS web is your
+22:20
+default so the listener is assigned to the front end IP of application Gateway
+22:25
+we are not using any TLS or certificates here so we use the HTTP Port which is port number 80 and the type will be
+22:32
+basic because we are not using multiple custom domains here let's go to the backend Targets in the backend pool
+22:38
+let's select the backend web as your backend and there are no backend settings already created so let's create
+22:44
+a new one so back
+22:51
+end setting
+22:56
+default web Azure and in the backend protocol also
+23:03
+we are going to use HTTP because we haven't installed any certificate or enabled any TLS on the backend
+23:10
+servers we are not enabling any session Affinity or connection draining let's leave everything default and
+23:17
+add now the back end setting is added and this is the place where the
+23:22
+path-based routing can be set up which I'll show after the deployment of application Gateway let's
+23:28
+add so now front end is aware which backend pool it should talk to using the routing
+23:35
+rule we don't need tags for this review and create and
+23:41
+create it will take couple of minutes to create application Gateway I'll pause the video and we'll be back once
+23:47
+application Gateway is created it took around 10 minutes and now application Gateway is deployed
+23:53
+let's go to the resource Group and here you go application Gateway is deployed now so let's go to
+24:00
+the application Gateway it's an app Gateway subnet it has a front end IP address so let's
+24:08
+check the configuration we didn't enable Autos scaling as you can see here backend pool
+24:15
+is already created with the two Targets web asure 01
+24:21
+02 front end IP address this is the public IP
+24:26
+address and there is a listener which is attached to the front end IP as you can see
+24:33
+here and there is a rule which is basic HTTP rule created so
+24:39
+that the any traffic hitting to the front end IP can reach to the backend server so let's check the public IP of
+24:46
+the application Gateway and see if it's working properly or not copy this
+24:56
+IP and perfect as you can see it's showing
+25:03
+this is a default page for web Azure 01 and if we'll keep hitting this it should load balance between web Azure 01 and 02
+25:11
+and as you can see after a few tries it's now load balancing between Azure 1 and Azure
+25:21
+2 so now instead of using the IP address let's use the custom domain and let's
+25:27
+map this IP to the custom domain in DNS zones let's go to DNS
+25:36
+Zone Dev SEC Ops tech. online create a record set no need to provide anything
+25:43
+just the IP address
+25:50
+okay and a cord will be created Alias record will be created for this so now let's try to reach devop stu. online
+26:02
+and as you can see load balancing between Azure 01 and Azure
+26:08
+02 now let's move on to the path-based or URL based routing so till now when a
+26:14
+request is coming to the front end IP of the application Gateway it's getting directly rerouted towards the backend
+26:20
+pool but in the case of the path based or the URL based routing application Gateway will smartly check the URL in
+26:28
+the request header and then decide which backend pool it should go
+26:34
+to so as in this lab if the URL has Azure in it then it will go to the Azure
+26:40
+backend pool and if it has AWS in it then it'll go to the AWS backend pool so
+26:47
+let's try to deploy the similar setup in Azure portal so before making changes to application Gateway I'll make the web
+26:53
+servers ready so that they can show a web page when the path has Azure or AWS in it so let's go to web Azure 02 I'm
+27:02
+already logged in I'll go to the is location which is C inet Pub www root
+27:11
+let's create Azure folder and copy the files which I have
+27:18
+already created so let me copy the
+27:26
+files there is one jbg file or Azure Cloud which you can see now it'll just
+27:32
+show an image and another one is an HTML file we just open this
+27:37
+image so let's open it with
+27:44
+notepad and as you can see it's just showing the image source so let's copy these two files
+27:51
+into the new location which is in folder ASO and let's check in the Local web
+27:59
+browser if the new setting is working or not if we go to the Local Host it'll
+28:07
+show the default page but if it'll type the path Azure Azure
+28:16
+HTML it shows the new web
+28:23
+page so that's good and for saving time I have already set this up in web Azure
+28:30
+01 and web AWS 01 so now we are ready to make changes
+28:35
+in application Gateway let's go to application
+28:47
+Gateway first let's create one backend pool
+28:53
+add web AWS back
+29:01
+virtual machine and web AWS 01 it will add the network interface
+29:08
+card of the virtual machine backend pool is created now we
+29:14
+don't need to make any changes to backend setting because we are going to use the port at HTTP
+29:20
+Port there will be no change to the front end IP to because frontend IP is mapped to the custom domain and we are
+29:26
+using the same custom domain for testing let's go to The Listener there
+29:33
+is one limitation with the listeners that we can't create multiple listener with the same public IP and
+29:38
+port and this default listener is already attached to the default tool so
+29:44
+to create a new rule we need to make the changes in this listener so that we can
+29:49
+create another listener with the port 80 so let's change it to port
+29:56
+8080 and save so that means now if we'll go to
+30:03
+our custom domain Dev op. online it should not work because the
+30:11
+port number is changed from 80 to 8080 let's wait for few minutes till these changes are reflected now the
+30:17
+changes are applied and listener is updated so let's go back to our custom
+30:22
+domain it will still not work let's use the port 880
+30:27
+and it's showing the default page now and it's load balancing between web
+30:34
+AIO 01 and 02 let's go back to our listener add a new
+30:39
+listener and this time we'll path based listener Port at0 public IP all
+30:48
+the settings are
+30:53
+same now let's go to the rule we'll create a new routing
+31:00
+rule rule name is path based rule priority let's give the priority as
+31:09
+11 new pathway listener and for the backend targets
+31:16
+let's add web AWS backend and we can use the same backend
+31:21
+settings now in the case of the path based routing we need to add multiple targets so let's add multiple
+31:28
+targets Azure star so that means if there if in the URL there is azure it
+31:36
+should go to web Azure backend
+31:43
+Azure path the backend setting same backend setting we can
+31:51
+use add another one now this time we'll add AWS
+31:58
+star backend will be web AWS backend same backend
+32:06
+settings and AWS path will be the name
+32:13
+add and now we have added the path base tools add and this will start making the
+32:21
+changes into application Gateway let's wait till all the changes
+32:26
+are applied we'll see how our custom domain URL is reacting to the new changes application Gateway is updated
+32:32
+now and there is a Pathways rule created now so let's go to Dev op.
+32:43
+online Azure and Azure HTML the page which we
+32:50
+have created and perfect as you can see this
+32:57
+was the page which was created for this path now let's change the path to AWS
+33:03
+AWS
+33:25
+dotmlpf routing which uses multiple targets and this shows application
+33:30
+Gateway is a smart webbased load balancer which checks the URL of the request and does the routing
+33:38
+accordingly that's it for this video in this video I'll show how to set
+TLS Termination Using Let’s Encrypt
+33:43
+up TLS or SSL termination in application Gateway however instead of using the
+33:49
+self s certificate I'll be using the let's encrypt CS sign certificate so
+33:54
+let's start with the introduction first what is TL s termination so it is a process of terminating the TLs
+34:00
+encryption of incoming https request at the application Gateway and then the
+34:06
+request will be passed onto the backend server in an unencrypted Form
+34:11
+application Gateway act as a intermediat where SSL or TLS certificate is used to decrep the incoming https request so the
+34:19
+benefit of using TLS termination with application Gateway is that so that it can offload the resource intensive task
+34:25
+of encryption or decryption from the backend servers which overall improves the performance and scalability of web
+34:31
+applications however application Gateway supports end to end TLS encryption but in this case I'll be talking only about
+34:37
+TLS termination now let's set up the TLs termination in the lab I have
+34:42
+pre-created the resources used for hosting the windows is server using application Gateway there is one virtual
+34:49
+machine which is created as you can see web server 001 it's a Windows 2019 server I have
+34:57
+installed is role in it which shows the default is Page I'll rdb to the web server and if I'll open the
+35:05
+browser Local Host as you can see the default page for
+35:11
+I and if I'll show the is
+35:21
+manager this is the default setup no changes has been done here it's a
+35:26
+default web website which is created when you install the roles using server manager so let's go to application
+35:33
+Gateway and application Gateway is created where a backend pool is created with the name web server pool and in the
+35:40
+backend pool the same web server is added here for the backend settings
+35:45
+there is a setting for port number 80 which is HTTP so right now our web page will be listening only on the port 0
+35:52
+which means HTTP protocol for the front end IP there is a
+35:58
+public IP configured for application Gateway if we go to the
+36:04
+listeners there is a web server listener which is created and it's also listening to the port at on HTTP for the front end
+36:11
+public IP of load balancer and finally the rule which is
+36:17
+created so for the listener which is listening to the port 80 on the front end IP of the load balancer goes to the
+36:23
+backend pool web server pool so this is the very basic configuration which has been done on application Gateway and if
+36:29
+you'll just open the public IP of the application Gateway it will show the default web
+36:42
+page and as you can see the default page is visible Now using the front end IP of
+36:47
+application gateway to set up the TLs termination we need a domain name and I have created one DNS Zone with the
+36:53
+domain name which is already registered with me there's a domain main name devops te. online as you have seen in
+36:59
+the previous video too an alias record is created for the
+37:05
+front end IP of the application Gateway so that means if you open the dev secops
+37:10
+tech. online it shows the same default page which was showing for the front end IP
+37:16
+of the application Gateway and when you view the site information you see that this site is not secure because it's
+37:22
+using HTTP protocol which is Port 80 so to make it more secure we'll now install
+37:28
+the TLs certificate in application Gateway and for any incoming request from the browser all the TLs termination
+37:35
+will happen at application Gateway itself however from application gateway to the backend servers the connection
+37:42
+will still be non-secure and it will use the protocol HTTP on which is p8 if you
+37:47
+use the self signed certificate for the TLs termination then every time a new connection is established from a browser
+37:53
+to the application Gateway the self- siiz certificate has to be trusted by the browser however to make it more real
+37:59
+I'll use the let encrypt CA sign certificate so as you can see this is the let encrypt website and they are a
+38:06
+nonprofit certifying Authority which provides CA certificates for free let's encrypt uses Acme protocol to issue a
+38:13
+certificate there are multiple third party clients which are available to generate the certificates the most recommended cboard
+38:21
+however this works well in Linux based servers and we have Windows iOS server so for that Vin
+38:28
+Acme works well which works on net so I'll be using Vin Acme for generating
+38:33
+the certificate so let's go to our web
+38:41
+server open the browser type wiy
+38:47
+acme.com and download the latest
+38:54
+vme save it open
+39:00
+folder and extract
+39:07
+everything now this is the application let's run this
+39:12
+application we have to trust it run
+39:20
+anyway now we can create a certificate using the default settings but in this case we don't want to use the
+39:26
+certificates on this Windows Server we want to generate the certificates and use on the application Gateway so for
+39:33
+that we'll use full options let's Type M and read bindings from I yes let's
+39:42
+press enter because one is already selected but there is one problem it's
+39:48
+telling that no website with the host bindings has been configured in I so for
+39:54
+this let's open the is manager
+40:02
+and let's check the bindings and as you can see there is no binding but we want to generate this
+40:09
+certificate for our domain name so let's provide the domain name
+40:20
+here okay close let's go back try again Type M
+40:26
+read the bindings and now it shows that there is a default
+40:32
+website let's select this pick all the
+40:39
+bindings and from the bindings it has found that it's for the domain Dev SEC op.
+40:45
+online yes so just type
+40:50
+enter and we want to use the single certificate because application Gateway only accepts a single single
+40:58
+certificate yes sub verification file from the memory
+41:03
+yep RS key instead of saving the certificate Windows certificate store
+41:09
+we'll just use the pfx archive because we want to generate a pfx file the reason why we are not using the windows
+41:15
+certificate store is because when we export the certificate from Windows certificate store it doesn't let us
+41:22
+export the private key so use three so let's get them C drive itself set up a
+41:28
+password number two we'll type the password
+41:34
+now now we don't want to save it in Vault no additional
+41:41
+steps we are done we don't want to open it we agree this is just a demo so I
+41:48
+don't need to renew it if you're using the certificate which has to be renewed after 90 days then provide your email
+41:54
+address so that you will be notified when your certificate will be expiring I'm not providing anything
+42:00
+here and done it will generate a certificate for me and as you can see
+42:06
+pfx file is generated which is in C drive so let's
+42:13
+quit close this and open the file explorer C
+42:22
+drive and here is the certificate this is a pfx file which will upload in application Gateway now to get this file
+42:29
+out of the web server I have created a Azure storage file share account so there is one storage account which is
+42:35
+created for this s file share and if you'll go to the file share
+42:42
+there's the share Drive let's copy this
+42:49
+information open the
+42:55
+Run change few
+43:01
+values and provide the
+43:08
+credentials I'll be using the access
+43:18
+keys let me copy the password
+43:25
+separately and here you go the share Drive is open now I'll copy the certificate to
+43:32
+the share drive it's done let's close everything close the rdb
+43:39
+session I have to sign in again so let's go to the storage account
+43:45
+again file share share Drive browse and download
+43:55
+this I check the
+44:02
+folder and I have the pfx file in my laptop now let's go to application
+44:18
+Gateway there will be no change in the backend pool because we are using the same web
+44:25
+server there will be no change in the backend settings because as I mentioned this is TLS termination not end to end
+44:31
+termination so the connection between application Gateway and the backend server will still be HTTP which is
+44:40
+p80 let's go to The Listener let's create a new
+44:46
+listener copy this name use 443 or
+44:51
+https I'll use 443 here https it uses 443 Port upload a certificate let's give
+44:59
+the certificate name as Dev SEC
+45:05
+Ops Tech upload the file
+45:13
+downloads and provide the
+45:19
+password and everything else will be default add
+45:27
+now there are two different listeners one for Port 80 one for Port 443 now I'll create a different rule for
+45:34
+Port 443 create a routing
+45:40
+rule let's copy the name from here
+45:46
+443 set up the priority as right because it was 10 so I'm just setting it up
+45:52
+eight select the listener as 443 for the back end back end pool will be the same backend
+45:59
+setting will be the same add it took a minute or two and now the
+46:05
+settings are saved there should be two rules now and let's go to Dev secops de.
+46:15
+online let's use https
+46:22
+here and as you can see it's secure now because security is provided by the
+46:27
+let's encrypt CS sign certificate but there is still one problem if you'll use the port
+46:37
+HTTP for this domain it shows as not secure to change this what we can do is
+46:43
+we can set up the redirection on Port 80 let's go back to application
+46:48
+Gateway and for the routing rule which was for the port 80 let's go to the back end targets and
+46:54
+instead of going to the backend pool let's set up a redirection which is permanent and the target listener will
+47:00
+be 443 so that means if anything which is being listened on Port 80 will be
+47:07
+moved to different listener which is listening on Port 443 let's save this it'll take couple of
+47:14
+minutes to save this it's all
+47:19
+done and if we go to the website refresh it now it's secure
+47:27
+so if we try again for the HTTP it'll go back to the CQ so that
+47:34
+means if it's HTTP it'll be redirected to https automatically to summarize this video first we have generated the let's
+47:41
+encrypt CS sign certificate using wiin Acme then we created the new listener for Port 443 and uploaded that
+47:49
+certificate there after making the new rules for Port 443 now our website which
+47:54
+is Dev secop op. online is using https protocol and is secure however you know
+48:01
+that there are connection between application Gateway and the backend server is still non-secure and I'll create a separate
+48:08
+video for end to end encryption of application Gateway that's all for this
+48:13
+video in this video I'll show how to set up multi-site hosting in application Gateway so let's start with the
+Multi-Site Hosting
+48:20
+explanation of what is multisite hosting it's a feature that enables a single Azure application gateway to host
+48:26
+multiple websites or web applications each with its own domain name so that
+48:32
+means you don't need a separate application Gateway for different domains which you are hosting in your environment and the benefit of using
+48:39
+multisite hosting is the easy management of resources as well as simplified way of setting up SSL or TLS
+48:46
+termination in my experience I have seen that most of the organizations keep one application Gateway for different
+48:52
+environment like prod nonpr and test so that means in the pr environment
+48:58
+there will be a single application Gateway which will host all the web applications in the pr environment and
+49:03
+the reason for keeping the separate application Gateway for each environment is because you don't want to make
+49:08
+changes in the production application Gateway because of the frequent changes you are doing in the test environment
+49:15
+and apart from this you can also set up path-based as well as the host-based routing for multi-site hosting and
+49:21
+application Gateway in this lab I'm using two different domain domains devop
+49:27
+te. online and shelinda online I have registered these two domains in GoDaddy
+49:32
+and I'll be using them as a DNS Zone in AIO there are two web servers which are created for this lab one web server will
+49:39
+cater the traffic for Dev seop te. online and the another web server will
+49:44
+cater the traffic for shalender online both of these web servers will be placed in a separate backend pool and using the
+49:51
+routing rule in the application Gateway all the traffic for these two different websites will go to their respective
+49:57
+backend pool I have pre-created few resources let's go to the virtual machine and there are two virtual
+50:04
+machines which are created one for Dev SEC op. online and another one for
+50:09
+shenda online so both of these virtual machines are windows 2019 servers and iOS feature
+50:16
+is enabled on them and a default web page is created which shows the name of the server and if we'll go to the DNS
+50:23
+zones there are two different DNS zones which are created Dev secops tech.
+50:28
+online and sheland the. online right now there is no Alias record which is created which will create after the
+50:35
+creation of application Gateway so let's create one application Gateway
+50:42
+create we'll select the resource Group RG Dev application Gateway it's already created where the virtual machines are
+50:49
+lineing let's name this application gateways agw Dev
+50:58
+01 the region will be Australia East and we are using the version two let's not
+51:04
+enable the auto scaling and we just want instance count as
+51:11
+one and for the virtual Network there is one virtual Network where all the virtual machines are also lying and
+51:18
+application Gateway as you know requires an empty subnet so an application Gateway subnet is also created for it
+51:24
+let's go to the front ends create a new front end IP
+51:29
+agw public IP
+51:35
+okay let's go to the back end let's create two backend pools let's name the first one as
+51:42
+backend Dev SEC Ops
+51:47
+tech for the Target type it will be a virtual machine which is already created and here is the Nick card for that
+51:54
+virtual machine add create another backend pool
+52:02
+backend pool shend virtual machine and this time it
+52:10
+will be the Nick card for the shell in the virtual machine ADD now two backend pools are
+52:17
+created let's create the routing rules now start with routing rule for Dev SEC
+52:24
+Ops Tech
+52:29
+rule the priority is 10 let's copy the
+52:35
+name listener for this lab I'll be using only HTTP protocol and if you want to
+52:41
+understand about the TLs termination and want to use the https protocol I have provided the link of TLS termination in
+52:46
+the description of this video The Listener type will be multisite and I'll select single Dev
+52:55
+secops tech. online in the case of the multiple or the wild card you can
+53:01
+provide the star if you have multiple host names like images. devc op. online
+53:08
+or videos. devc op. online so in that
+53:13
+case you can use the wild card but we have a single website with the default page so I'll be using the
+53:19
+single let's select the backend targets select the pool and create a new backend setting
+53:28
+the SEC Ops Tech
+53:33
+setting and add let's create another routing rule shender do
+53:41
+rule priority is 11 listener in the SL
+53:49
+listener it's for the same fronted IP we'll be using the HTTP protocol and
+53:56
+multisite shender do online for the back end Target this time
+54:02
+we'll select the another backend pool backend pool chender and you can use the same backend
+54:09
+setting or create a new one let's create a new one shend the
+54:17
+setting add and add now for the same front end IP we have created two
+54:25
+different routing rules with two different backend pools next review and
+54:31
+create and let's create this will take around 5 minutes
+54:38
+to create application Gateway and configure it I'll pause the video and we'll be back once it's done application
+54:43
+Gateway is created now let's check go to the resource
+54:48
+Group application Gateway this is the public IP of application Gateway this is the application
+54:54
+Gateway if we check the backend pools there are two backend pools backend setting there should be
+55:00
+two different backend settings we can use one also in this case but because we are creating everything separate for two
+55:07
+different websites so we created these two different settings front end IP there is only one
+55:13
+public front end IP for the application gate so if we'll check the listeners there are two listeners which are
+55:19
+listening on Port 0 and I will check the rules there are two different rules created for it so now to use the website
+55:26
+we have to create the Alias record in the DNS zone for both the website against the public IP of application
+55:33
+Gateway so let's copy the public IP
+55:39
+first and go to DNS zones let's make changes to Dev secops tech.
+55:45
+online provide the public IP and okay oh sorry there is a
+55:54
+space okay now we'll do the same thing with chanda. online too create a new record
+56:02
+set provide the IP and okay now let's check those
+56:08
+websites in the browser Dev secop
+56:16
+st. online and here you go the web page for
+56:22
+Dev SEC Ops Tech and this this is coming from the web server Dev secop
+56:28
+stack now let's check Another one shender not online and now this is also showing the
+56:37
+web page from the web server shalender to summarize this video using the multisite hosting multiple domains or
+56:44
+the multiple website can be hosted using a single application Gateway both of these websites will have different
+56:50
+listeners different routing rules and the different back end and you can set up the TLS termination setup path-based
+56:56
+routing or the host based routing so that means a single application Gateway can be used to host all the websites in
+57:03
+your environment that's all for this video and in this video I'll explain the
+Custom Health Probes
+57:09
+custom Health probs in asure application Gateway so let's start in application
+57:14
+Gateway a health prob is a feature to regularly check the health of the backend servers so application gway
+57:21
+regularly sends the request and then evaluate the response to make sure the traffic is directed to the healthy
+57:27
+servers and it is important because if there are no Health probs then the application Gateway will keep on sending
+57:33
+the request or the traffic to unhealthy backend servers and there will be a traffic loss and which will impact the
+57:39
+reliability and the performance of applications so by default application Gateway creates the health prob on Port
+57:45
+80 and 443 which is HTTP or https and it is based on the port or the protocol
+57:52
+which the backend servers are listening on so if the backend server or the web server you can call it as is listening
+57:58
+on Port 80 then automatically a health prob will be created which will regularly checks on Port 80 and if it's
+58:05
+listening on Port 443 or using the protocol 443 then the application Gateway Health probe will continuously
+58:11
+monitor the backend server on Port 443 based on the frequency and the timeout application Gateway will flag
+58:18
+the backend server if it's not listening on Port 80 or 443 so now we will talk
+58:24
+about the custom Health probs they provide the ability to customize the health checks based on application
+58:29
+specific needs you can set up the custom Health prop based on protocol Port path
+58:35
+or the response criteria response criteria means which type of response you're getting when you're hitting the
+58:41
+URL based on the response criteria application Gateway can accurately monitor the back end and then direct the
+58:48
+traffic to the healthy backend servers so let's check this in lab to focus on custom Health props I have already
+58:54
+created the setup of application Gateway along with the backend resources so let's go to the virtual
+59:01
+machines and there are two virtual machines which are created both are 2019 Windows server and
+59:09
+they are running IAS but instead of using the default I page I have created a basic HTML page let's go to
+59:16
+application Gateway there is one application Gateway
+59:21
+with the name agw Dev 01
+59:27
+and it's a version two application Gateway in the backend pool there is one backend pool which is created but it has
+59:33
+two servers which I have created web server one and web server
+59:39
+2 if we'll go to the backend setting both of these servers are listening on Port 80 which is HTTP
+59:46
+protocol for the front end IP there is a public IP configured for application Gateway which is mapped to The Domain
+59:53
+named Dev secop online which I have been using throughout the whole series if I'll go to The Listener a
+1:00:00
+listener with the name web server listener is created and it's listening on Port 443 I
+1:00:06
+have uploaded the certificate for Dev SEC op. online and it's mapped the front end IP of the application Gateway and if
+1:00:13
+you want to know how to set up the TLs termination in application Gateway you can check one of my previous video and I
+1:00:20
+have provided the link of that video in the description of this video we will check the
+1:00:26
+rules a rule is created where the listener is mapped to the backend pool using the backend settings which I have
+1:00:33
+already shown you and let's go to the DNS
+1:00:38
+Zone and for the DNS Zone Dev secops tech. online I have created an alias
+1:00:45
+record for the front end IP of the application Gateway so this is the whole setup where the load balancing will
+1:00:51
+happen between web server 1 and web server 2 let's open the URL devc op.
+1:00:57
+online and we'll keep refreshing it let load balancing between server one and server 2 as you can
+1:01:04
+see now let's go to the application Gateway and check the health
+1:01:09
+props right now there is no Health prop created but that doesn't mean that application Gateway is not monitoring
+1:01:15
+the backend servers as I've already explained by default application Gateway monitors the backend server on Port 80
+1:01:22
+or 443 based on what the backend servers are listening on so let's go to the monitoring and the backend Health it
+1:01:28
+takes few seconds to refresh it let's wait as you can see both the servers are
+1:01:33
+healthy and they are listening to Port 0 now let's test the backend Health by making changes to the backend web
+1:01:40
+servers right now I have RDP into the web server 01 let's open the is
+1:01:49
+manager this is web server 01 and stop the service now let's go to the URL devc
+1:01:56
+op. online and as you can see it's still waiting for the page to load for web
+1:02:02
+server 01 however if you'll refresh again it'll load the web server 02 because the asure application Gateway is
+1:02:08
+still load balancing between these two servers now let's go to the application Gateway and check the backend Health
+1:02:16
+refresh as you can see it's still showing it healthy but the response
+1:02:21
+which is getting is 53 which is an issue with the back server and you would be thinking why it's showing healthy the
+1:02:27
+reason is because by default it retries for three time with the timeout of 30
+1:02:33
+seconds and frequency of 30 seconds for certain amount of time there will be a packet loss but eventually after some
+1:02:40
+time the application Gateway will be aware that there is an issue with the backend server and it will stop
+1:02:47
+redirecting the traffic towards that backend server so let's check
+1:02:52
+again and the URL is showing the Gateway timeout now if you'll refresh again
+1:02:58
+it'll redirect to web server 02 refresh again now application Gateway is aware
+1:03:04
+that web server 01 is having some issues and it's not redirecting the traffic
+1:03:09
+there and on the backend Health page as your application Gateway has marked it as unhealthy and now no traffic is being
+1:03:17
+redirected towards the web server 01 let's restart the service
+1:03:23
+again
+1:03:28
+and let's check now it's redirecting between 01 and 02 and if you'll refresh the back end
+1:03:36
+Health it will show that both servers are healthy perfect but in the case of the
+1:03:42
+production of the Enterprise level not all the web server listens to Port 80 or 443 sometimes there is a custom Port
+1:03:49
+which is created for specifically for that web application and there is one more problem and in some scenarios the
+1:03:55
+web server is listening to Port at or 443 but it's not loading the web pages
+1:04:02
+let me show you let's go to web server
+1:04:08
+01 and go to the path C drive inet Pub ww root and this
+1:04:18
+is my page which is web server 01 first web server this this is the HTML page which
+1:04:25
+is created let's move this HTML page from
+1:04:32
+here to some other location any location you can move it to let's go back to Dev
+1:04:37
+secops tech. online and now you can see instead of
+1:04:43
+web server 01 it's showing the default web page of IAS and it's load balancing
+1:04:49
+between the two different servers in this scenario application Gateway will think think that the backend server is
+1:04:56
+fine and it's listening on Port 80 or 443 but actually it's showing the wrong
+1:05:02
+information which is not the correct web page so this is the reason custom Health probes have to be created for
+1:05:09
+this let's rward back the
+1:05:15
+changes and move it to www root let's
+1:05:21
+refresh and now you can see it's working fine now to make sure application
+1:05:28
+Gateway monitors the path as well as the port of the backend server so we have to create the new custom Health
+1:05:35
+probes so let's add a custom Health probe name it as web server
+1:05:45
+probe the backend server in this lab are listening on Port 0 so I'll select the
+1:05:51
+protocol HTTP there's an option to pick up the the host name from The backend settings but because we are using the
+1:05:58
+multiple servers in the backend pool so we need to provide the domain name here
+1:06:03
+Dev secops tech. online pick up the port from the backend
+1:06:09
+settings which will be Port 80 but in case if your web servers are listening on a different port like at80 or any
+1:06:15
+other Port you can mention it here for the path application Gateway should look for
+1:06:24
+my page. HTML file in the root folder which is www
+1:06:30
+root folder let's reduce the interval to 10 seconds time out as 10 seconds and
+1:06:37
+unhealthy threshold as one so that application Gateway will quickly figure it out and flag the backend server and
+1:06:44
+stop redirecting the traffic towards that backend server in the prob matching condition by default 200 to 399 status
+1:06:51
+code is provided however you can add different codes and provide an exemption
+1:06:56
+this is done usually in the cases where there is a certain file and only authorized user have access to that
+1:07:04
+file so in this lab I'm selecting it as no select the backend setting which is
+1:07:10
+web server setting and let's test it an application Gateway has
+1:07:16
+found and application Gateway has found my page. HTML in both the servers and
+1:07:22
+both the servers are healthy for now add so now application Gateway has
+1:07:29
+custom Health probs which is monitoring on Port 80 as well as the path let's go
+1:07:36
+to the web server 01 and try to move the web page
+1:07:42
+again let's move this page to any other location and let's check the
+1:07:51
+URL now again it has started showing the default page because the actual web page
+1:07:56
+is moved because the interval is 10 seconds
+1:08:02
+application Gateway should quickly flag the backend server as un healthy now you can see the back end server is showing
+1:08:10
+as unhealthy because it's providing the status code AS 404 and if we'll go to
+1:08:15
+the custom Health probes and test it from here it is also showing that one of the
+1:08:22
+server is unhealthy so let's go to the web page and now the application Gateway is
+1:08:30
+not load balancing between web server 01 and 02 and it's just providing the web page from server
+1:08:37
+02 so let's go back to the web server 01 and move the page back again to the to
+1:08:43
+its actual
+1:08:48
+location let's go back test it again and this time it should be fine and as you
+1:08:54
+can see now application Gateway is able to locate my page. HTML for both the
+1:09:03
+servers and if we'll go to the URL now it should load balance between both the servers as you can see web server 01 and
+1:09:11
+02 so to summarize this video a health probe is a feature in application
+1:09:16
+Gateway which regularly checks the health of the backend servers by default
+1:09:21
+application Gateway monitors only 80 and 443 of of the backend servers which is
+1:09:28
+sufficient if we are testing in a lab but in the case of the production of Enterprise environment different
+1:09:33
+application have different requirements and in the custom Health Pro monitoring can be done based on
+1:09:38
+protocol Port path and the HTTP response of the backend
+1:09:43
+servers so that's all for this video in this video I'll show how to set
+End to End TLS Encryption
+1:09:49
+up end to endend TLS encryption in application Gateway however instead of
+1:09:54
+using the self- signed certificate I'll use the ca sign certificate from lets
+1:09:59
+encrypt so let's start application Gateway supports both TLS termination as
+1:10:05
+well as end to end TLS encryption so in the TLs termination at the application Gateway TLS encrypted traffic is first
+1:10:13
+decrypted at the Gateway and then the traffic flows unencrypted to the backend
+1:10:18
+server while in the case of N2 NLS encryption all the data which is passed between the web server and the browser
+1:10:25
+of the users remain private and encrypted hence it provides the security for the entire journey of the data
+1:10:32
+starting from the client to the backend server which maintains the confidentiality and
+1:10:38
+integrity the architectural diagram on your screen is showing the unencrypted flow of traffic from the user till the
+1:10:45
+backend servers where application Gateway is in the middle in this lab I'll be using the custom domain as
+1:10:51
+shalender online so as you can clearly see in the diagram that the user when
+1:10:56
+they are hitting shal lender.com in the browser then the traffic will go unencrypted using the protocol HTTP and
+1:11:03
+then the application Gateway will forward the traffic to the web servers using the protocol HTTP itself so that
+1:11:10
+means there will be no encryption in this setup but in this lab we are going to set up end to endend TLS encryption
+1:11:16
+where the traffic from user to application Gateway and from application gateway to the web server will be
+1:11:21
+encrypted so if the traffic from user to the application Gateway is encrypted that is called as TLS termination but in
+1:11:28
+the case of TLS termination the traffic between application gateway to the web server will be in clear text or plain
+1:11:35
+text form in the case of the end to end TLS encryption the data is encrypted
+1:11:40
+from user to the backend servers so we'll be using let's encrypt CS sign certificate and we need to set up the
+1:11:46
+certificate both on application Gateway as well as the web servers because we want to make sure that web servers are
+1:11:53
+listening on Port 443 otherwise application Gateway can't transfer the data over Port 443 to the web servers so
+1:12:01
+let's set this up in lab now I have pre-created resources like web servers
+1:12:06
+and DNS zone for custom domain so let's check the virtual
+1:12:12
+machines there are two virtual machines which are created web server 01 and web server
+1:12:17
+02 if we click on web server 01 it's a 2019 server and I have installed IAS on
+1:12:24
+this and created a default HTML page if I'll quickly RDP to this
+1:12:31
+server and open the Local Host you can see it shows the name of
+1:12:37
+the server and if you'll try https it not work because it's only listening to http right now same is the case with the
+1:12:43
+web server 02 which is a 2019 Windows Server 2 and is is installed on it and if iile RDP to
+1:12:51
+the web server 02 and open Local Host in the web browser and it should show the name of
+1:12:58
+the web server and apart from this there is a DNS Zone which is
+1:13:05
+created let's focus on shalender do online because I'll be using this one and this lab it's showing the previous
+1:13:12
+Alias record but when we have the application Gateway set up and we'll change the Alias record for shalinda
+1:13:17
+online to be pointing towards the public IP of application Gateway so let's create an application Gateway without
+1:13:23
+TLS termination or end to end TLS encryption and then we'll generate the certificates which we'll use for https
+1:13:30
+protocol let's create application Gateway go to the application gateways
+1:13:37
+create a new
+1:13:42
+one I'll select an existing Resource Group RG Dev application
+1:13:48
+Gateway let's name it as agw Dev 01
+1:13:55
+region is Australia East and we using the version two let's disable the auto
+1:14:00
+scaling and make the instance Scout as one no need of availability Zone and
+1:14:05
+let's select the network and application Gateway subnet it's already selected because I have a
+1:14:12
+virtual network with application Gateway subnet the condition for using the application Gateway subnet is that there
+1:14:18
+should not be any resource created in that subnet let's go to the front end create
+1:14:23
+a new IP agw public IP
+1:14:30
+01 okay create a backend server web
+1:14:37
+server
+1:14:43
+pool select the virtual machines 01 as well as
+1:14:50
+02 add and in the configurations let's create the routing
+1:14:59
+rule web server rule let's give the priority as
+1:15:07
+100 web server listener front end IP to be the public
+1:15:14
+and for now we'll be using HTTP protocol for the backend Target select
+1:15:20
+the back end pool and create a new back setting with HTTP protocol and port
+1:15:26
+at web server
+1:15:32
+setting add now the front end IP routing rules
+1:15:40
+and the backend pool is created next review and create and
+1:15:47
+create creation of application Gateway takes few minutes so I'll pause the video and we'll be back once it's done
+1:15:55
+application gway is created now let's go to the resource Group and go to the application Gateway
+1:16:02
+and you can see a front end public IP address of application Gateway it's in the subnet application Gateway
+1:16:09
+subnet we look at the back end pool there is one back end pool with two Targets which are the two virtual
+1:16:15
+machines which we have created web server 01 and 02 back end settings right now we using
+1:16:23
+using HTTP protocol with Port 0 front end IP it's the public front end
+1:16:30
+IP for The Listener it's listening on Port 0 which is protocol HTTP and
+1:16:36
+there's a basic rule which shows that the listener which is listening on the front end IP should go to the backend
+1:16:41
+Target using the specific backend setting which we have created let's grab the front end IP
+1:16:48
+address and then go to the DNS Zone
+1:16:57
+I'll update the Alias record with the new IP
+1:17:05
+address save let's check the URL shelinda do
+1:17:17
+online HTTP and it showing web server
+1:17:25
+0102 and now the application Gateway is load balancing between server 01 and 02
+1:17:30
+but as you can clearly see it's showing as non-secure because we using protocol HTTP instead of https now to set up the
+1:17:38
+end to end TLS encryption I'll generate the certificates using one of the web server
+1:17:45
+itself I'm in web server 01 and this is the is manager for web server 01 open
+1:17:51
+Vin Acme in web
+1:17:58
+browser so vme is a client for Windows which is used to generate the let's
+1:18:03
+encrypt certificate let's download it
+1:18:10
+save extract
+1:18:17
+everything and run the application wacs
+1:18:27
+run anyway there are multiple ways you can
+1:18:33
+create the certificate using the default setting as well as the full options using the default settings the certificate goes into SE manager and
+1:18:40
+most of the times the private key is Not exportable So what we'll do in this case is we'll use the full options
+1:18:47
+M and generate the certificate in the pfx format read binding from
+1:18:57
+IAS but right now there are no bindings so we'll provide the bindings now
+1:19:03
+M manual input shell.
+1:19:12
+online we want a single certificate provide the verification from the
+1:19:17
+memory RSC key the default option is Windows
+1:19:23
+certificate store but instead of that I want to create the pfx format select option
+1:19:30
+three file path let's save this in C drive number two so that we can provide
+1:19:36
+the password we don't want to save it to
+1:19:43
+Vault no additional steps no additional
+1:19:50
+installation no and agree to to the terms because this is a lab and we don't
+1:19:55
+want to renew these certificates so let's not provide the email address
+1:20:00
+here and the certificate is created now as you can see it's in C drive shalinder
+1:20:07
+online. pfx so let's go to the C
+1:20:12
+drive and here is the certificate as I have shown in the slide that the
+1:20:17
+certificate will be installed or used at two places one is Windows is server
+1:20:23
+another one is application Gateway so we'll install the certificate for both
+1:20:29
+the web servers 01 and 02 let's do it let's open is
+1:20:35
+manager go to the web server server
+1:20:41
+certificates import get the file from the C
+1:20:49
+drive you have to provide the password
+1:20:56
+okay now let's go to the default website or the website which you have created for your
+1:21:03
+server click on the bindings add a new binding for
+1:21:09
+https select the certificate shalender online
+1:21:15
+okay close open the web
+1:21:20
+browser Local Host so instead of using HTTP let's use
+1:21:29
+https and you would be thinking why it's still showing untrusted certificate because we generated certificate for
+1:21:36
+sheland the. online not Local Host but because shelendra online is not mapped
+1:21:42
+directly to the web server there is application Gateway in between so once
+1:21:47
+we'll set up everything and finally when we'll use the shalender do online it should show and to end encryption and
+1:21:53
+https should be shown there now we have to repeat the same steps for web server
+1:21:58
+02 but for this we need to take this pfx file certificate out of this web server
+1:22:05
+and for this I have created a file share storage account let's go to the portal
+1:22:13
+first storage account there is one storage account
+1:22:18
+which is created for this purpose file share with the name share
+1:22:26
+01 let's copy this and open in the web
+1:22:50
+server it'll prompt for username and password
+1:22:55
+let me move this so that I can copy the password username is the name of the
+1:23:01
+storage account and password is the access
+1:23:07
+key let's copy this and open the same thing in the another web server
+1:23:20
+02 provide the user the name
+1:23:26
+password and copy the file to the C
+1:23:32
+drive let's open I manager for web server 02 go to the server
+1:23:40
+certificates import the
+1:23:46
+file provide the password
+1:23:54
+okay now let's go to the default site create a binding for
+1:24:02
+https open the web browser for HTTP it's working fine let's
+1:24:09
+check https and it's showing as not secure but
+1:24:17
+still showing the web page as https because the certificate generated is for shelander online
+1:24:23
+now our both the web servers are listening on Port 443 and using protocol
+1:24:29
+https let's go to the application Gateway now and get the
+1:24:35
+storage account to Let's download the
+1:24:49
+file file is downloaded now let's go to the application Gateway so
+1:24:55
+let's go to the backend setting to create a new backend setting for protocol https and Port 443 because now
+1:25:02
+our servers are listening on both Port 80 and 443 add a new
+1:25:16
+setting we'll use https so backend server certif ific is
+1:25:22
+issued by a well-known CA because it's less let encrypt so I'll select yes but in case if you're using the self- signed
+1:25:29
+certificates and you can provide the root certificate here but in this case I'll select as
+1:25:34
+yes we are not enabling any cookie based Affinity or connection draining so let's
+1:25:39
+save this so let's create a new listener for
+1:25:51
+https for the front end public IP select https upload a certificate let's provide
+1:25:58
+name as shalinder online file let's get it from the
+1:26:08
+downloads I'll provide the
+1:26:16
+password basically is now we are not using multi-site and add
+1:26:23
+now we have created two backend settings and two listener and as you can see for
+1:26:28
+for the new listener which we have created there is no rule Associated so let's create the
+1:26:39
+rule web server rule
+1:26:48
+https let's set up the priority it was 100 so let's let set it up as 90 listener
+1:26:56
+astps backend Target to the same backend pool and we'll use the backend setting
+1:27:01
+as https setting and add so once the changes in the application Gateway are
+1:27:07
+saved we'll open sh. online in browser changes are saved
+1:27:13
+now let's refresh the
+1:27:19
+page and now there are two different rules with two different listeners and two different backend setting so let's
+1:27:25
+open shalender do online first and it's fine because we are using HTTP let's
+1:27:31
+change it to https but we got an error that it's a
+1:27:38
+bad gateway and that means application Gateway is not able to contact the backend servers on Port 443 so let's go
+1:27:45
+back to application Gateway backend setting https and we have to make
+1:27:51
+changes to the host name because the certificate which we have provided here is a well-known CA certificate but it is
+1:27:58
+generated for shelander do online not web server 01 or 02 so override the new host
+1:28:07
+name let's provide shender online and save now the changes
+1:28:15
+are saved let's go back again and refresh the page and as you can see it's
+1:28:20
+showing as web server zero 1 and 02 it's load balancing between them and the connection is secured because we are
+1:28:26
+using the ca sign let's encrypt certificate to summarize this video we first created two windows web server 01
+1:28:33
+and 02 and then installed the is server on it later we generated the certificate
+1:28:40
+using let encrypt on one of the Windows server and on server 01 and 02 we
+1:28:46
+imported that certificate and those web servers started listening on Port 443 on
+1:28:51
+application Gateway we made changes in listener backend setting and the application Gateway rules where we
+1:28:57
+provided the certificate and made changes according to protocol https because the certificate was generated
+1:29:04
+for shalender online so when we open shalender online using https protocol in
+1:29:09
+the browser the connection is secure end to endend from browser till the web server so that's all for this
+App Service Integration
+1:29:16
+video in this video I'll show how to deploy a web application using the app service and your application Gateway so
+1:29:24
+let's start multiple components and the features will be deployed in this lab as you can see on the slide I'll start with
+1:29:31
+the deployment of app service plan using which a web application will be created in app service I'll use the framework as
+1:29:37
+dotnet and deploy a sample asp.net web application which will be created using
+1:29:43
+visual studio once the web application is hosted on the app service I'll create the Azure application Gateway version
+1:29:49
+two where the front end IP configuration ation listener backend pool backend setting and routing rule will be created
+1:29:56
+the backend pool will have a app service which will be created for asp.net and in the backend settings I'll use the
+1:30:02
+protocol sttp so that means the traffic from application gateway to app service will be unencrypted and use protocol
+1:30:10
+HTTP however during the creation of The Listener I'll upload a certificate for the custom domain shalender online and
+1:30:16
+use the protocol https which means the traffic from the user to the application Gateway will be
+1:30:22
+encrypted and we'll use port 443 and once application Gateway is ready there
+1:30:28
+will be certain integration and configuration changes that have to be done so that app service can be integrated to Azure application Gateway
+1:30:36
+however you would be thinking that when we deploy virtual machine in the backend pool for the Azure application Gateway
+1:30:42
+there are no certain changes has to be done but because app service is a platform as a service so there are some
+1:30:49
+integration that has to be done on the virtual net Network level so let's go to Azure portal and start with our
+1:30:55
+deployment right now there is no app service plan deployed so let's create a new
+1:31:01
+one and create a new Resource Group RG
+1:31:08
+backend let's name it as ASP Dev 001 the
+1:31:14
+operating system will be windows and the region will be Australia
+1:31:19
+East there are multiple pricing plans which are available let explore the pricing plans so I'll select the
+1:31:26
+standard S one let's go to tags we are not creating any tag so let's review and
+1:31:32
+create and create so app service plan is created now go to the
+1:31:40
+resource and you can see it's a S1 plan now let's go to app
+1:31:47
+service and create a new web app
+1:31:54
+we'll use the same Resource Group as RG backend and name it as shalender and the
+1:32:00
+URL will become shelanda do azurewebsites.net we'll use the code
+1:32:06
+select the runtime stack as version 4.8 esp.net version
+1:32:12
+4.8 operating system will be windows and Australia East to with region I'll use
+1:32:17
+the same app service plan which I've just created there is no need of any database
+1:32:23
+because we are just deploying a sample asp.net application we don't need any cicd
+1:32:29
+Pipeline and for now we'll enable the public access no monitoring is
+1:32:37
+needed this is just a lab and I'll delete everything after this video is completed so no need of tags here review
+1:32:44
+and create and I'll be back once the web application is ready it took around a
+1:32:49
+minute or two and now web app is is created let's go to the resource and as you can see and the web app is created
+1:32:56
+now and it's using the service plan S1 with the default domain as shenda
+1:33:01
+azurewebsites.net so let's open this and it's just showing the default page let's
+1:33:08
+open Visual Studio and create a sample asp.net
+1:33:14
+application create a new project it will be asp.net core web
+1:33:20
+app next let's name it as web application 1 and
+1:33:25
+I'll provide the location where it will be saved next I'll use the net 8.0
+1:33:32
+long-term framework there is no need of https because in the back end setting we'll be using protocol stt and the
+1:33:38
+traffic between application Gateway and the app service will go
+1:33:44
+unsecured so visual studio is creating the project now so the visual studio provides an option where you can look
+1:33:51
+locally deploy the application and see how it looks like so let's deploy the
+1:33:57
+application and this is a temporary deployment once you'll close the browser automatically it'll reset and it's using
+1:34:04
+Port 5233 on the Local Host so let's make some basic changes so that our website looks like a custom website for
+1:34:13
+us let's go to Pages index.html actually it's index. CSH HTML
+1:34:20
+make some changes welcome to web app aure
+1:34:28
+service and let's remove this line
+1:34:34
+save let's let's redeploy and check how it looks like now so as you can see it's
+1:34:40
+showing welcome to web app as your service and now I'll publish this sample web application into Azo so let's go to
+1:34:48
+publish so there are multiple options you can deploy locally on a web server is server you can save it in a folder
+1:34:56
+you can use the docker but I'll deply in AO next because we are using Azure app
+1:35:02
+service Windows I'll select that next now it's looking for the app
+1:35:08
+service plans which are already created so as you can see RG backend is the resource Group and shalender is the web
+1:35:14
+app so let's finish and deploy close this profile is created and let's deploy
+1:35:20
+actually there is a mismatch between the framework which is used in web app and in the visual studio now
+1:35:27
+Visual Studio is very smart and it'll automatically fix everything for you it has started the deployment of this
+1:35:33
+sample web application into Azure app server and I'll be back once this is deployed it took few minutes and now web
+1:35:40
+application is deployed as you can see chanda. azurewebsites.net and it showing
+1:35:45
+the custom web page which we have created and visual studio is also showing us that it's successfully
+1:35:51
+published list so let's cancel this now the next
+1:35:56
+step is to create the Azure application Gateway and we'll use the web app in the backend
+1:36:01
+pool so let's go back to portal application
+1:36:09
+Gateway create a new one there is a resource Group already
+1:36:16
+present RG Dev application Gateway I'll use this one agw Dev
+1:36:24
+001 the region will be Australia East I'll use the version as version two and
+1:36:30
+change the instance count to one no need of any availability Zone and by default
+1:36:36
+HTTP 2 is enabled let's select the virtual Network and there is a subnet app
+1:36:43
+Gateway subnet which is created specifically for application Gateway the condition for using the subnet for
+1:36:49
+application Gateway is that there should not be any Source in that subnet let's go to front end create a
+1:36:56
+new public IP agw public IP
+1:37:04
+01 go to the back end create a new backend pool web
+1:37:11
+app pool select the app
+1:37:16
+service there is a web app named shender let's select this one add
+1:37:22
+now let's go to the configuration now the front end is created backend pool is ready now we have to create the routing
+1:37:30
+rules let's name the routing rule as web app rule give the priority as
+1:37:37
+100 listener as web app listener and instead of using the HTTP
+1:37:44
+protocol we'll use the https in one of the previous video I have generated certificate for shalender
+1:37:51
+online using leten which is a CS sign certificate and you can find the link of that video in the description of this
+1:37:58
+video shender online is the name of the
+1:38:05
+certificate it's in downloads and let me provide the
+1:38:11
+password now I'll go to backend targets there's a backend pool which is created and let's create a new backend
+1:38:19
+setting web apps setting and because we have created the
+1:38:25
+web application using protocol HTTP and we haven't provided any certificate so
+1:38:31
+the connection between Azure application Gateway and app service will be using port at or protocol
+1:38:37
+HTTP add and add now we have the whole setup with the
+1:38:43
+front end IP listener routing rules and the back end
+1:38:48
+pool next review and create and create application Gateway usually takes
+1:38:56
+around 5 to 10 minutes so I'll pause the video and we'll be back once it's deployed application Gateway is deployed
+1:39:03
+now so let's go to the resource Group and go to application Gateway now
+1:39:09
+because we'll be using the custom domain shalender online so let's copy this public IP of application
+1:39:16
+Gateway and go to DNS Zone
+1:39:23
+I have two custom domains with me one is devc op. online and shelinda online for
+1:39:28
+this video I'll be using shalender online and update the Alias record here
+1:39:33
+because I have been using this DNS zone for another videos too so instead of
+1:39:39
+creating a new one let's update the existing one
+1:39:46
+save all set now let's open shalender do online
+1:39:53
+but instead of getting the sample web page we are getting the 502 bad gateway now there are certain configuration that
+1:39:59
+has to be done on app service and virtual Network so that so that application Gateway integrates with
+1:40:05
+Azure app service let's go to Virtual
+1:40:13
+Network go to service endpoints and now we have to create a
+1:40:19
+service endpoint for Microsoft web so that the virtual Network can connect to app service using the Microsoft backbone
+1:40:27
+Network add Microsoft web and application Gateway subnet is
+1:40:33
+the subnet where application Gateway is deployed add and this will create a service
+1:40:39
+endpoint for virtual Network now let's go to app
+1:40:49
+service and go to the network working Section now let's make changes to
+1:40:55
+inbound traffic access restriction so now we'll add a rule
+1:41:01
+where the subnet where application Gateway is deployed will have access to app
+1:41:08
+Service app Gateway allow rule number 100 or you can
+1:41:16
+get give any number Select the virtual Network
+1:41:22
+and application Gateway subnet add this Rule and if we'll be using shalinda do
+1:41:27
+online to access the sample web application we don't want it to be published using shalender
+1:41:33
+azurewebsites.net so now because of the unmatched rule action everything which
+1:41:38
+is not in the rule will be denied and we can't disable the public access the reason is because if we'll disable this
+1:41:45
+all the incoming traffic will be blogged apart from private endpoints but we are not creating private endpoint in in this
+1:41:51
+video so let's go back to application Gateway and make the final
+1:41:59
+change go to the application Gateway and the backend
+1:42:06
+setting and in the backend setting we have to overwrite the new host
+1:42:13
+name and we have to pick up the host name from The backend Target itself which will be shelanda do aure websites.
+1:42:22
+net save and the application Gateway changes are saved and if you'll open
+1:42:28
+shender do azurewebsites.net it's forbidden because it's only
+1:42:34
+accessible from application Gateway right now let's open shalender do online
+1:42:39
+and perfect it's showing the sample web page which we have deployed on app service to summarize this video we have
+1:42:45
+first created an App service plan where we deployed an web app on App service we
+1:42:50
+used Visual Studio to create a sample asp.net application and then deployed it
+1:42:56
+in app service later application Gateway was deployed where front end IP configuration listener rules and the
+1:43:04
+backend pool and the backend settings were created now this is the important part where we made some configuration
+1:43:09
+changes so that the integration between app service and application Gateway happens first we created the service
+1:43:16
+endpoint in the virtual Network for microsoft. Webb so that the subnet can connect to the Past service using the
+1:43:22
+web application later the public access of the app service was disabled and the
+1:43:28
+access was provided specifically to the application Gateway subnet due to which app service URL which was shalender
+1:43:35
+azurewebsites.net was not accessible through internet and finally in the backend setting of application Gateway
+1:43:43
+host name of the app service was overridden and once these changes were done now using the custom domain
+1:43:50
+shalender online the sample web application which we created an App service is
+1:43:55
+accessible so that's all for this video so much in this video I'll show how to
+HTTP Header Rewrite
+1:44:01
+configure header rewrites in Azure application Gateway so let's start with the introduction of what are HTTP
+1:44:08
+headers they are the components of HTTP messages which are exchanged between the client so the client can be web browser
+1:44:16
+or a command terminal like curl or load balancer they provide additional information about the request and the
+1:44:22
+response which are provided by HTTP messages along with the type of content which is being sent in those messages
+1:44:29
+there are two types of HTTP headers one is request header and the another one is response header as you can see on your
+1:44:37
+screen the request header are the components of HTTP messages which are received from the browser to the
+1:44:44
+application Gateway and the response header are the components which are being sent as a response from
+1:44:50
+application Gateway itself so in application Gateway header rewriting is the ability to modify the HTTP headers
+1:44:57
+of request and response when they pass through the Gateway and using this
+1:45:02
+feature application Gateway can add remove modify the headers to meet the
+1:45:08
+specific requirements or enhance the security of a web application so let's check this in lab and configure header
+1:45:14
+rewrite in application I have pre-created the resources in the lab to support the
+1:45:20
+header rewrite first I have created a web application in Azure app service using the asp.net and afterwards this
+1:45:28
+web app is added into the backend pool of azure application Gateway if you'll go to the application
+1:45:36
+Gateway there is one application Gateway which is created with the name agw Dev
+1:45:44
+001 and in the backend pool the app service is added as you can see here
+1:45:52
+the configuration of the application Gateway is that the communication between the browser and the application
+1:45:57
+Gateway is secured using let's encrypt CS sign certificate however the connection
+1:46:03
+between application Gateway and the app service is using HTTP protocol which is port at and I'm using the custom domain
+1:46:10
+shalender do online which is mapped to the frontend IP of application Gateway so let's open shelanda
+1:46:18
+online and this is the sample as p.net web application which is created so let's check the HTTP headers of this web
+1:46:26
+page right click go to the inspect click on network reload the page
+1:46:33
+and click on the URL and you can see response headers and
+1:46:39
+request headers request headers are the components which are received from the
+1:46:45
+browser and response headers are the components of the message which are sent
+1:46:50
+from from application Gateway so by looking at the response header anyone will know that I'm using Microsoft
+1:46:57
+I and in the back end it's only HTTP protocol as I mentioned the connection
+1:47:02
+between application Gateway and Azure app service is only HTTP and it's using
+1:47:08
+the domain chanda. azurewebsites.net so to hide this information we'll rewrite
+1:47:14
+the header rules in application Gateway let's go to application
+1:47:19
+Gateway go to rewrites rewrite set create a new one
+1:47:26
+let's name it as web app
+1:47:33
+rewrites and let's associate it to the routing rule which we have next add a
+1:47:39
+rewrite rule first let's name it as server because we want to remove the
+1:47:45
+server information let's give the rule number number as 100 click on the configuration
+1:47:52
+for the setion it's from the response header
+1:47:58
+delete let's look for Server okay
+1:48:05
+create let's wait for the application gateway to save these changes changes are saved now let's go to our website
+1:48:13
+again and refresh click on the URL and now you'll
+1:48:19
+not see the server in the response header let's do the same thing with the set cookie because set cookie is
+1:48:25
+providing lot of crucial information which should not be available for
+1:48:30
+everyone let's go to application Gateway again rewrites and we'll go to the same
+1:48:37
+rewrite Rule and add a new
+1:48:43
+rule let's name it as
+1:48:48
+cookie give it as 100 10 response header
+1:48:55
+delete and set
+1:49:01
+cookie and we'll update the rules now so the changes are saved in
+1:49:08
+application Gateway let's go back to the web page refresh the page click on the URL and in the response header now there
+1:49:15
+is no server and no set cookie so till now we have learned how to delete the entries from HTTP header so now let's
+1:49:23
+check whether we need any security headers to be added in the response header let's go to security head.com
+1:49:30
+and look for our website copy this
+1:49:36
+link type it here UNS scan and now it's showing that there are
+1:49:44
+multiple headers like strict Transport Security content security policy X content type type options which
+1:49:51
+are missing from our response headers but in this video I'll show few options and how to change them so the strict
+1:49:58
+Transport Security also called as hsts is a web security policy mechanism that helps you to protect the websites
+1:50:04
+against man- in the-middle attack so when a web server send this header to the user browser it informs the browser
+1:50:11
+that it should only connect to the website over https connection for a certain period of time as you can see
+1:50:17
+here strict Transport Security maximum age this is equal to 365 days and
+1:50:23
+include subdomains means that the policy should apply to all the subdomains of the current domain so let's create this
+1:50:29
+header into the rewrites go to the application Gateway we'll use the same rewrite
+1:50:37
+rule next add a new one let's name it as
+1:50:46
+hsds 120 configure the action response header and
+1:50:53
+we are setting it up let's look for strict Transport
+1:51:01
+Security and the header value will be which we have copied maximum age of
+1:51:06
+365 days and include the sub doain okay
+1:51:11
+and update once the changes are saved in application Gateway we'll check the
+1:51:17
+website let's go to our website refresh the page and in the response header you can
+1:51:25
+see the strict Transport Security header is there let's go back to the security
+1:51:30
+header. comom and scan the website again and see if anything has changed
+1:51:40
+now and perfect as you can see strict Transport Security header is configured
+1:51:47
+properly let's set up x-frame option options so this is an important security
+1:51:52
+header to prevent clickjacking attacks where an attacker could overlay a malicious page over your website page
+1:51:59
+and it can trick to users to use their malicious page and the value of same origin as you can see we should apply
+1:52:06
+for same origin It means that the frames to be displayed should come from the same domain itself so let's copy this
+1:52:15
+option go to the rewrites next add a new rewrite rule XF
+1:52:24
+frame 140 and let's configure this response header
+1:52:32
+set XF frame options and let's copy same
+1:52:41
+Orion update the application Gateway and now let's check the changes into the
+1:52:47
+website refresh the page click on on the
+1:52:52
+URL and x-frame options same origin is is now part of our response
+1:52:58
+header let's scan the page again and now two security headers are acting
+1:53:04
+perfectly let's make a last change to X content type options and this is an HTTP
+1:53:09
+response header that helps protect against mime attack which is sniffing vulnerabilities so mime full form is
+1:53:16
+multi-purpose internet mail extension and it is also called as content type sniffing once we'll set up the value as
+1:53:22
+no sniff then this header informs the web browser to only trust the dedicated
+1:53:27
+content type and don't change the content type into the browser let's copy
+1:53:33
+this go to rewrite rules next create a new rewrite
+1:53:41
+rule X content 14
+1:53:48
+150 click to conf configure response header if you can't find this option
+1:53:54
+instead of the common headers let's click on custom header copy this and copy the value
+1:54:04
+too update now let's go back to the website and see if the new header is
+1:54:10
+available or not and you can see no SF option X
+1:54:16
+content type options is available and we'll scan our website
+1:54:21
+again now previously it was showing red now it's showing yellow we have to still
+1:54:26
+add the security headers but for this lab this is enough and now our website
+1:54:31
+is partially secure so to summarize this video header rewriting is the ability to
+1:54:37
+modify the HTTP headers so that the specific requirement can be met and the
+1:54:42
+security of the web application can be enhanced so that's all for this video in this video I'll explain in
+Monitoring and Logging
+1:54:50
+monitoring and logging options for application Gateway in Azure so let's
+1:54:55
+start I have already created application Gateway and other resources which are
+1:55:00
+required to deploy a website so let's go to application Gateway there is a application Gateway
+1:55:07
+named agw Dev 001 and there is one backend pool with
+1:55:12
+the name web server pool is created where there is a web server with the name web server 01 so if we go to the
+1:55:20
+web server 01 it's a 2019 Windows Server where I
+1:55:26
+feature is enabled and a custom HTML page is deployed which will show the name of the server so let's go to Azure
+1:55:33
+application Gateway again the backend setting is using protocol HTTP which
+1:55:38
+means the connection between Azure application Gateway and the web server is unsecured however the connection
+1:55:45
+between the user and application Gateway is using protocol https s where I have
+1:55:51
+provided the Cs sign certificate for custom domain shalender do online so I will go to The
+1:55:57
+Listener and a web server listener is created with the port 443 and a
+1:56:03
+certificate is provided for shalender online so if we'll go to shalender do
+1:56:09
+online this shows the name of the server where the web application is deployed and it's using protocol https as you can
+1:56:15
+see the connection is secure now let's go to the monitoring section in a your portal and there are multiple options
+1:56:22
+available alerts metrics diagnostic settings logs insights backend health
+1:56:27
+and connection troubleshoot so let's start with the backend Health as you can see the
+1:56:32
+backend server is healthy and using port at and the protocol HTTP application Gateway uses the
+1:56:40
+default probs for Port 0 or 443 depends on which your web server is listening on
+1:56:46
+and checks the health of the server there are another option of using the custom Health probs which I have already
+1:56:52
+discussed in another video and you can find the link of that video in the description so if will go to the
+1:56:59
+metrics for the application Gateway there are different metrics which are available and if we'll move the mouse
+1:57:05
+you can see the description too so application Gateway total time this shows the total time the request has
+1:57:11
+taken when it's processed and the response is sent back to the user so we'll click here and let's
+1:57:18
+change it to last 12 hours it'll show the different response
+1:57:25
+time when the website was hit and because this is a lab and I'm not using this website for anything so that's the
+1:57:31
+reason there are very less traffic on it same way you can check back end connect time how much time it's taking for the
+1:57:37
+back end to connect different backend response status how many bytes are sent and
+1:57:44
+received you can check and what are the total number of the requests you can check from here there are there were
+1:57:49
+around 15 requests at 3:47 p.m. there are a lot of metrics which are available so if you want to drill
+1:57:56
+down or troubleshoot any issue but if you just want to monitor the application Gateway you can go to the
+1:58:02
+insides and this provides the basic metrics as well as the detailed
+1:58:07
+metrics let's change the time range to 12 hours and it is showing capacity
+1:58:12
+units were used at that time and each capacity unit is either one compute unit
+1:58:18
+or 2,5 500 persistant connections or 2.25 Mbps throughput and for the
+1:58:24
+application Gateway there are minimum 10 capacity units which are assigned to which the default billing is set and if
+1:58:31
+you'll use Beyond those 10 capacity units you will be charged for that as
+1:58:36
+you can see the latency from the backend server and the latency from the application Gateway all the throughput
+1:58:42
+unhealthy host count because there is only one server and it's running fine any failed requests and if you you want
+1:58:49
+to go in more details there's an option of view detailed
+1:58:55
+metrix there if we change the range to 12 hours so you can see the performance
+1:59:02
+metrics capacity units compute units connections throughput then you can see
+1:59:08
+the latency and there is a description also
+1:59:13
+available here and the traffic total number of
+1:59:18
+request and the different response status for them and the backend metrics are also available here along with the
+1:59:26
+billing so in the billing as I have mentioned so the minimum billing capacity unit is 10 as you can see here
+1:59:33
+but if you'll use more than that you will be charge for that the benefit of using the metrix option is that you can
+1:59:39
+create the rule from here so if we'll check the total
+1:59:45
+request and you can see the total number of requests are 15 so let's create a new alert
+1:59:52
+rule let's see if total number of requests is more than 10 then you should be alerted let's change it to 12 hours
+2:00:01
+apply and as you can see over the last 12 hours during thir 1542 there were
+2:00:06
+around 15 requests so let's set the threshold value as 10 check every 1
+2:00:15
+minute for 1 minute loop back period of 1 minute
+2:00:20
+set the actions says create an action group and the region is global
+2:00:27
+email and the display name also as [Music] email notification type should be
+2:00:36
+email name alert email to shalinder doch
+2:00:48
+gmail.com okay next action there are multiple
+2:00:53
+actions which you can create while creating the alert rule you can use the automation run book or you can use the
+2:01:00
+Azure functions itm if you want to create service now ticket or any different methods all these can be used
+2:01:07
+here for now I'm not using anything I'll just leave it blank review and create and create and
+2:01:15
+the action group is created let's select this Action Group next
+2:01:21
+details let's mark it as sity as very critical rule name as alert rule as
+2:01:28
+total requests review and create and create
+2:01:35
+now this rule will be created and if there are more than 10 hits then I should be notified over the email so
+2:01:42
+let's open shelander do online multiple
+2:01:47
+times and let's refresh
+2:01:52
+it so that it provides a lot of hits let's go to the inside and check the
+2:01:58
+view detailed metrics and total number of request
+2:02:03
+here go to the traffic select last 5 minutes it took only few minutes to
+2:02:08
+update the metrics here and as you can see there were around 35 requests generated at 2334 the response data was
+2:02:15
+300 series and because we have created an alert tool that if the request count is more than 10 then I should be
+2:02:22
+notified over the email and I have received the alert for that so this is
+2:02:27
+the email Aller looks like the metric name is total request it provides what
+2:02:33
+is the name of the resource Group and what is the value it was more than 10 so
+2:02:39
+the value is 35 over the last 1 minute so that's how you can view the metric in the insights as well as you can
+2:02:46
+troubleshoot and in the metrics you can dig deep into the different matrices which are available and you can create
+2:02:52
+the alert rule also from here now for the logging option first we have to enable the diagnostic settings in this
+2:02:58
+case I have already created but what you have to do is add diagnostic settings
+2:03:04
+there are three different diagnostic settings which can be enabled one is access logs performance logs and the
+2:03:09
+firewall logs the firewall logs will not work in our case because we haven't enabled the web access firewall but it
+2:03:16
+will mostly be the access logs so let's select all logs and all the
+2:03:22
+metrics and provide the name and you can send it to log analytics workpace which
+2:03:27
+you have created though I have already created this so if I'll go here all the
+2:03:33
+logs are going to log analytics workspace which is created for this and
+2:03:38
+it's sending all the metrics as well as all the different logs so if we'll click on the
+2:03:44
+logs and there are some alerts and the different requests which are provided here here like the request per hour you
+2:03:50
+can check directly from here either you can check in the form of
+2:03:55
+the chart or in the table form where you can see there are 41 requests which are
+2:04:02
+created one thing you have to be mindful of is this is UTC time zone and you can
+2:04:07
+convert into local time zone and it will provide the time which is in your laptop right now because you have created the
+2:04:14
+diagnostic settings now all the logs of the application Gateway are going into log analytics workspace so if you want
+2:04:21
+to check all the access logs you can use this query this is a Costo query because the
+2:04:28
+log analytics workspace use the custo query so let's copy it here so it's
+2:04:33
+Azure Diagnostics where the categories application Gateway access logs and it's and it's sought by time generated so
+2:04:41
+let's run let's run for last hour and these are all the different
+2:04:48
+logs logs you can open anyone and check the properties different properties here
+2:04:53
+so if you want to query the request per minute by URI so you can use this
+2:05:01
+query so what it's doing is resource providers Microsoft network access logs
+2:05:07
+and you have to summarize the count by the request URI and provide it here
+2:05:12
+instead of the last hour let's check it for 12 hours and run so these are the different
+2:05:20
+Uris where the website was reached however I have just the shalinder online
+2:05:25
+page so the other queries would have been rejected from the backend server so
+2:05:30
+this is how you can check which request URI are provided by the client or by the
+2:05:37
+user so if you want to check the different client IP addresses you can check it if you'll use
+2:05:44
+this query it will provide the summary of request uis client IPS and the request query run for last 12
+2:05:52
+hours sorry you have to select it and run and then you can see there are the
+2:05:59
+different IP addresses so like this IP address provided 60 requests so if you
+2:06:04
+want to block any IP address you can block it from here go to the new alert
+2:06:11
+Rule table rows count we are checking the count for 1 minute select the
+2:06:17
+dimensions and as client IP let's select all if the threshold value is more than
+2:06:25
+20 and 1 minute then it should alert so you can create the actions you can
+2:06:30
+create you can select the Action Group which is created for a email you can go to the details provide
+2:06:37
+the detail about the alert and then create it so in future if more than 20 requests are generated from any single
+2:06:44
+IP address which we have selected then we'll be alerted through an email
+2:06:49
+so this is how you can set up an alert for all the different logs there are
+2:06:54
+other options also you can check the different https status code which you can check in metrix too but there is an
+2:07:01
+option to check it from here itself so uh there were different
+2:07:07
+requests which were which got error 404 some got 400 200 series and
+2:07:12
+300 but if you want to check if someone is trying to reach to your website without https protocol call then you can
+2:07:19
+check here so the resource type is application Gateway operation name is application Gateway access and SSL
+2:07:27
+should not be enabled so these are the different and you can check all the details here you can filter It Down
+2:07:32
+based on client IP or client port or HTTP
+2:07:37
+status so using the custo queries you can customize the different alerts or
+2:07:42
+the monitoring of your application Gateway the last option is connection troubleshoot and as the name suggests
+2:07:50
+and using this option you can do the connection troubleshooting so source is always
+2:07:55
+application Gateway here for the destination you can use the virtual machines in ASO or you can specify the
+2:08:02
+URI fully qualified domain name or the IP address and if you'll select the virtual
+2:08:07
+machine like this is the backend server for us you can select which destination Port it should reach on so this
+2:08:14
+diagnostic test will check the connectivity as well as the network Security Group if the connection is
+2:08:20
+blocked by network security group or not to summarize this video we have discussed about the different metrics
+2:08:26
+which are available for application Gateway most of these metrics can be viewed from insides through a single
+2:08:31
+pane of glass and the backend health will be monitored by default and if you want to use the custom Health probs then
+2:08:39
+not only the port and the protocol will can be monitored in fact the URL or the file can be
+2:08:44
+monitored and to enable the logging you have to set up the diagnostic settings in Azure application gateway then all
+2:08:51
+the access logs performance logs and if in case you have web access firewall enabled then the firewall logs will also
+2:08:58
+go to the log analytics workspace and using the custo queries and you can
+2:09:03
+filter out all the request and then create an alert over there and finally we discussed connection troubleshoot
+2:09:09
+where we can see the connectivity as well as the network security group Diagnostics using this so that's all for
+2:09:15
+this video in this video I'll explain expl the scaling options in Azure application
+Schedule Scaling with Automation Runbooks
+2:09:21
+Gateway while creation of application Gateway you get an option to either select autoscaling or the manual scaling
+2:09:28
+in autoscaling you provide the minimum number of instances as well as the maximum number of instances so that
+2:09:34
+application Gateway doesn't scale beyond that limit however in the case of manual instances you just provide the current
+2:09:41
+number of instances you require at that time manual scaling is not recommended for the production use because you have
+2:09:48
+to manually change the number of instances for the application Gateway and in the case of more traffic and
+2:09:54
+utilization as your application Gateway will not scale and in that case users will face latency while hitting the
+2:10:01
+website so let's check the scaling in the lab let's go to Azure portal and I
+2:10:06
+have already created Azure application Gateway here let's go to Azure application Gateway there is a
+2:10:13
+application Gateway with the name agw Dev 001
+2:10:19
+and if we'll go to the configuration you can clearly see the capacity type is manual if we'll go to the properties of
+2:10:26
+application Gateway you can see the current instance count let's go back to configuration and
+2:10:33
+enable the auto scaling I'll provide minimum instance count as one and the maximum to be
+2:10:39
+three save changes are saved now let's go back to properties and now you will not see
+2:10:46
+the instance count here so that means you don't have insights on how many instances are running for application
+2:10:52
+Gateway though the billing of application Gateway version to depends on two factors static Factor where there
+2:10:58
+is a minimum billing and the dynamic factor which involves the throughput the
+2:11:03
+current connections and data transfer so if we'll go to the insights in
+2:11:09
+monitoring you can see the current capacity units and one instance has minimum of 10 capacity units for which
+2:11:15
+you are built if you use more than 10 Capac unit you will be charged based on that let's assume a scenario where there
+2:11:22
+is a traffic surge on your website from morning 11:00 to 1:00 in the afternoon
+2:11:28
+so in that case if the auto scaling is enabled your application Gateway will Scale based on the load but sometimes
+2:11:35
+when there is instant traffic application Gateway takes some time to scale which can lead to the latency
+2:11:42
+issues on your website so the solution for this issue is using the scheduled scaling which I'll show you in this lab
+2:11:48
+using Azure automation let's create an automation account search for
+2:11:55
+Automation and create a new automation account I'll select an existing Resource
+2:12:00
+Group RJ Dev application Gateway automation account name Dev Auto
+2:12:07
+001 I'll keep the region as Australia East go to next in this case I'll use
+2:12:12
+the system assigned manage identity next I'll keep the public access in the network connect
+2:12:18
+activity next review and create and create as your automation is created now
+2:12:24
+let's go to the resource now before we create the Run books I'll assign the permission to automation account to make
+2:12:30
+changes in application Gateway let's look for identity it's an account setting
+2:12:38
+identity because during the creation we enabled the system assign manage identity let's go to the permission
+2:12:44
+Azure role assignments right now this Azure account has no permissions let's assign the
+2:12:53
+role select as Resource Group and
+2:12:58
+contributor because our application Gateway is lying in RG Dev application
+2:13:03
+Gateway the rule is assigned now now let's go back to automation
+2:13:10
+account and click on run books Let's create a new run book Let's
+2:13:16
+name it as scaleup the runbook type will be Powershell and
+2:13:22
+the version will be 5.1 leave the description as blank and create now we have to provide the
+2:13:29
+Powershell script I'll just copy paste the script
+2:13:35
+here so first we using three parameters one is application Gateway name Resource
+2:13:40
+Group name and the number of required instances and these parameters have to be provided while running this runbook
+2:13:47
+either we can can execute the Run book manually or link it to a schedule then
+2:13:52
+it's using the managed identity where we have provided it permissions on the resource Group where application Gateway
+2:13:59
+is lying it's importing the module LA and then it's making the autoscale
+2:14:05
+configuration changes where it's providing the minimum capacity so let's save this and before
+2:14:12
+we publish let's test this here let's provide the name of
+2:14:18
+application Gateway let's go to application
+2:14:25
+Gateway agw Dev 001 Resource Group
+2:14:34
+name and the number of instances right now Autos scaling is enabled on application Gateway where the minimum
+2:14:41
+number of instances is one and the maximum number is three because there will be a traffic surge we want the
+2:14:48
+minimum number of instances to be two so let's set up the value as two and start
+2:14:54
+this will take couple of minutes to run I'll be back once the script is completed job is completed now let's go
+2:15:02
+to application Gateway go to the configuration and now you can see the
+2:15:07
+minimum instance count is two however when we configured the autoscaling we set up the maximum instance count as
+2:15:13
+three but in this case as you can see in the script we didn't Pro provide any maximum capacity so by default it has
+2:15:21
+taken s 10 so in the script you can provide
+2:15:27
+hyphen Max Capacity and add that to in
+2:15:35
+parameters number of minimum required instances and maximum required
+2:15:43
+instances so let's change this
+2:15:49
+minimum required instances copy [Music]
+2:15:55
+this and create the new
+2:16:03
+parameter so this way you will provide both the minimum instance count as well as the maximum instance count let's save
+2:16:10
+this and publish let's create another run book for the scal down
+2:16:16
+option
+2:16:21
+Powershell 5.1 as the runtime environment and let's copy the same
+2:16:28
+script go to automation
+2:16:36
+account go to the Run books scale up
+2:16:42
+view copy the same thing and paste it here and
+2:16:49
+save and publish so as we assumed a scenario
+2:16:56
+where the traffic surge happens at 11:00 a.m. and dies down at 1: p.m. so let's
+2:17:02
+create two schedules go to the automation account go to the
+2:17:08
+schedules add a schedule scale up schedule which will
+2:17:14
+start from tomorrow 11:00 a.m. Australia time and another schedule for scaling
+2:17:22
+[Music] down tomorrow 1:
+2:17:28
+p.m. create now let's go to the Run books first let's go to scale
+2:17:36
+up and link to a schedule we'll select the scaleup
+2:17:43
+schedule provide the parameters let's go to application gate and copy the
+2:17:53
+parameters Resource Group name number of instances so we are
+2:18:00
+scaling up so we want to provide three number of minimum number of instances to
+2:18:06
+be three and maximum to be five we'll select okay and okay so when you go to
+2:18:12
+schedules you can see the next run is tomorrow 11:00 a.m.
+2:18:18
+same way let's repeat for scale down link to a schedule we'll select the scale down
+2:18:25
+schedule we'll provide the same parameters and save it and this is how two different run books are created one
+2:18:33
+for scaling up one for scaling down I have parameterized all the variables in the Powershell script so every time you
+2:18:39
+don't need to create a new script you have to just provide the variables during linking to schedule or running it
+2:18:44
+manually and the same script will work for scaling up and scaling down so
+2:18:49
+that's all for this video in this video I'll explain how to set up a start stop
+Start/Stop App Gateway using Automaton Runbooks
+2:18:55
+schedule for application Gateway using the Azure automation runbooks so the cost optimization is the most important
+2:19:01
+pillar for well architected framework and the basic principle of cloud is that the resource should be running only when
+2:19:08
+it's in use so if we'll take an example of application Gateway if it's deployed in the production then we'll not be
+2:19:14
+touching that however there could be application Gateway deployed for Dev or test environment where your Dev team
+2:19:21
+perform the testing before the release in the production so in that case those application Gateway can be shut down
+2:19:28
+during off business hours or the weekends so let's go to Azure portal and create a automation for start stop of
+2:19:35
+application Gateway I have already deployed an application Gateway with the name agw Dev
+2:19:42
+00001 and if we'll go to the configuration Autos scaling is enabled here
+2:19:48
+where the minimum instance count is two and the maximum instance count is 10 so that means if the application Gateway is
+2:19:54
+running we will be charge for the minimum two instance count and there are other factors too which generate the
+2:20:00
+cost which are throughput data processing capacity units but an ideal application Gateway still uses minimum
+2:20:06
+capacity unit for which we are charged so let's create a new automation account where we'll create the runbook for the
+2:20:13
+start and stop of application Gateway let's go to automation account
+2:20:18
+create a new automation account I'll select an existing Resource Group RG Dev application Gateway Dev
+2:20:27
+Auto 001 and the region will be Australia East next let's enable the system assign
+2:20:34
+manag identity and after the creation of automation account we'll assign the roles and permissions let's leave the
+2:20:40
+connectivity as public next next and create automation account is created now
+2:20:47
+go to the resource now before creating the Run book we'll assign the permissions to the
+2:20:53
+automation account let's go to Identity it'll be in the account settings
+2:20:59
+identity and as during the creation we enabled the system assign manage identity let's go to as your role
+2:21:07
+assignments add a role assignment select the scope you can select different Scopes like subscription Resource Group
+2:21:14
+keywall storage SQL so let's select the resource group where application Gateway
+2:21:19
+is line and provide the role
+2:21:24
+as contributor save now this automation account has
+2:21:31
+contributor level of access over the application Gateway let's go back to automation
+2:21:39
+accounts go to the Run books create a new run book Let's name it
+2:21:45
+as stop
+2:21:50
+app Gateway Powershell runtime as 5.1 and
+2:21:58
+create and now we have to provide the Powershell script so this is the Powershell script for stopping the
+2:22:04
+application Gateway it requires two parameters where we have to provide the application Gateway name and the
+2:22:10
+resource Group name it uses the manage identity where we have provided the permission over application Gateway it
+2:22:17
+Imports the a module and then get the details about application Gateway and
+2:22:23
+then stops it so let's test this save and
+2:22:29
+test we have to provide the application Gateway name let's go to application Gateway copy the
+2:22:38
+name and then provide the resource Group
+2:22:44
+name and start this will take a while to run and I'll
+2:22:50
+pause the video and we'll be back once it's done runbook has executed successfully as you can see the messages
+2:22:57
+here now let's go to application Gateway and go to the properties where
+2:23:04
+you can see the operational State and it's showing as stopped so that means our script ran successfully now let's go
+2:23:11
+back to the edit option publish now if you'll see run book is created and you
+2:23:18
+can run it manually but you want to add it to a schedule so let's go to Azure automation
+2:23:26
+account and create a schedule add a new schedule name stop app Gateway so every
+2:23:37
+Saturday you want to stop it at around 12
+2:23:43
+a.m. create now let's go back back to run
+2:23:48
+books stop application Gateway link to a
+2:23:55
+schedule selected provide the parameters copy the name of application
+2:24:02
+Gateway provide the resource Group
+2:24:09
+name and okay and if you'll go to the schedules
+2:24:16
+it will show that next run is tomorrow at 12:00 a.m. in the morning let's
+2:24:21
+create another run book so that we can start the application Gateway on the Sunday morning
+2:24:29
+[Music] 8:00 Powershell 5.1 version
+2:24:37
+create let's copy the same script so instead of stop let's make it
+2:24:44
+a start start application Gateway and save
+2:24:49
+it same way let's publish it and while linking to schedule we can
+2:24:54
+provide the parameters let's go back to
+2:25:01
+schedule create a new schedule start app
+2:25:07
+[Music] Gateway so Monday
+2:25:13
+0800 8:00 go to the Run
+2:25:20
+books sorry Start runbook link to a schedule link start
+2:25:27
+application Gateway and same way we can provide the parameters and by this way both the
+2:25:33
+schedules will be created for stopping and starting during the weekend and this will save a significant cost on
+2:25:38
+application Gateway so that's all for this video I hope you liked it please like And subscribe thank you so
+2:25:44
